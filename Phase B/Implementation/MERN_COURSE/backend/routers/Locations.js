@@ -2,6 +2,10 @@ const { Location } = require('../models/Location');
 const express = require('express');
 const router = express.Router();
 
+/**
+ * creating a new location object and saving
+ * it to the database
+ */
 router.post('/', async (req, res) => {
   const { latitude, longitude, name } = req.body;
 

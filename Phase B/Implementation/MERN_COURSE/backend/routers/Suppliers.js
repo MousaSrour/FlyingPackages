@@ -4,6 +4,7 @@ const router = express.Router();
 
 /**
  * get the supplier by the userId
+ * and show the location and the user objects
  */
 router.get('/get/:id', async (req, res) =>{
     const supplier = await Supplier.find({'user' : req.params.id})
@@ -15,8 +16,17 @@ router.get('/get/:id', async (req, res) =>{
     res.send(supplier);
 })
 
+router.get('/getAllSuppliers', async (req, res) =>{
+  const supplier = await Supplier.find();
+  if(!supplier) {
+      res.status(500).json({success: false})
+  } 
+  res.send(supplier);
+})
+
 /**
  * add a new supplier
+ * to the database
  */
 router.post('/', async (req,res)=>{
 
@@ -35,6 +45,22 @@ router.post('/', async (req,res)=>{
 
     res.send(supplier);
 })
-
+/**
+ * update the location for the first
+ * time that the suppleir sign in
+ */
+router.put("/updateLocation/:id/:location", async (req, res) => {
+    const supplier = await Supplier.findByIdAndUpdate(
+      req.params.id,
+      {
+        location: req.params.location,
+      },
+      { new: true }
+    );
+  
+    if (!supplier) return res.status(404).send("the location of the supplier cannot be updated");
+  
+    res.send(supplier);
+  });
 
 module.exports = router;

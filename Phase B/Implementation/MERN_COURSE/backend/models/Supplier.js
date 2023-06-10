@@ -7,8 +7,8 @@ const supplierSchema = new mongoose.Schema({
     
     status: {
         type: String,
-        enum: ['type1', 'type2','type3'],
-        default : 'type1',
+        enum: ['OK', 'WARNING'],
+        default : 'OK',
     },
     ordersNo: {
         type: Number,
@@ -16,7 +16,6 @@ const supplierSchema = new mongoose.Schema({
     },
     registirationDate: {
         type: Date,
-        required: true,
         default : Date.now
     },
     companyName: {

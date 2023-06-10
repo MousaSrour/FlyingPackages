@@ -15,19 +15,10 @@ app.options('*', cors());
 
 //middleware
 app.use(bodyParser.json());
-//app.use(morgan('tiny'));
-//app.use(authJwt());
 app.use('/public/uploads', express.static(__dirname + '/public/uploads'))
 app.use(errorHandler);
 
-//Routers
-const categoriesRouters = require('./routers/categories');
-const productsRouter = require('./routers/products');
-const userssRouter = require('./routers/users');
-const ordersRouter = require('./routers/orders');
-const mainRouter = require('./routers/main');
 
-// FOR FlyPackages
 const supplierRouter = require('./routers/Suppliers');
 const courierRouter = require('./routers/Couriers');
 const flyOrdersRouter = require('./routers/flyOrders');
@@ -40,13 +31,7 @@ const billRouter = require('./routers/bills');
 
 const api = process.env.API_URL;
 
-app.use(`${api}/categories`, categoriesRouters)
-app.use(`${api}/products`, productsRouter)
-app.use(`${api}/users`, userssRouter)
-app.use(`${api}/orders`, ordersRouter)
-app.use(mainRouter)
 
-// FOR FlyPackages
 app.use(`${api}/Suppliers`, supplierRouter)
 app.use(`${api}/Couriers`, courierRouter)
 app.use(`${api}/flyOrders`, flyOrdersRouter)

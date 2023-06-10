@@ -27,9 +27,14 @@ const flyuserSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        required: true
-    }
-
+    },
+    isNew: {
+        type: Boolean,
+        default: false,
+    },
+    company: {
+        type: String,
+    },
 });
 
 // flyuserSchema.virtual('id').get(function () {

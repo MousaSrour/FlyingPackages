@@ -2,7 +2,9 @@ const {Courier} = require('../models/Courier');
 const express = require('express');
 const router = express.Router();
 
-
+/**
+ * post a new Courier to the database
+ */
 
 router.post('/', async (req,res)=>{
 
@@ -22,7 +24,9 @@ router.post('/', async (req,res)=>{
 
     res.send(courier);
 })
-
+/**
+ * getting all the Couriers and showing the location and the user objects
+ */
 router.get(`/`, async (req, res) =>{
     
     const courierList = await Courier.find()
@@ -69,7 +73,9 @@ router.get('/get/:id', async (req, res) =>{
     } 
     res.send(supplier);
 })
-
+/**
+ * update the availability status of the courier
+ */
 router.put("/updateStatus/:id", async (req, res) => {
     const courier = await Courier.findByIdAndUpdate(
       req.params.id,
@@ -83,7 +89,9 @@ router.put("/updateStatus/:id", async (req, res) => {
   
     res.send(courier);
   });
-
+/**
+ * update the status of the courier OK,WARNING
+ */
   router.put("/updateStatusOfTheCourier/:id", async (req, res) => {
     const courier = await Courier.findByIdAndUpdate(
       req.params.id,
@@ -97,7 +105,9 @@ router.put("/updateStatus/:id", async (req, res) => {
   
     res.send(courier);
   });
-
+/**
+ * update the location of the courier
+ */
   router.put("/updateLocation/:id/:location", async (req, res) => {
     const courier = await Courier.findByIdAndUpdate(
       req.params.id,

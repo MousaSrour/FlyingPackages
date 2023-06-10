@@ -101,7 +101,10 @@ router.post("/", async (req, res) => {
 
   res.send(flyorder);
 });
-
+/**
+ * getting all the orders and show every information
+ * about the orders
+ */
 router.get("/get/allOrders", async (req, res) => {
   const orderList = await flyOrder.find().populate([
     {
@@ -137,7 +140,11 @@ router.get("/get/allOrders", async (req, res) => {
   res.send(orderList);
 });
 
-
+/**
+ * getting all the orders that made by a
+ * specefic supplier and show every information
+ * about the orders
+ */
 router.get("/get/:id", async (req, res) => {
   const orderList = await flyOrder.find({ supplier: req.params.id }).populate([
     {
@@ -172,7 +179,13 @@ router.get("/get/:id", async (req, res) => {
   }
   res.send(orderList);
 });
-
+/**
+ * getting all the orders that made by a
+ * specefic courier and the 
+ * status of the 
+ * order is pending and show every information
+ * about the orders
+ */
 router.get("/get/courierOrders/:id", async (req, res) => {
   const orderList = await flyOrder.find({ courier: req.params.id, status:"PENDING" }).populate([
     {
@@ -219,7 +232,11 @@ router.get("/get/courierOrders/:id", async (req, res) => {
   }
   res.send(orderList);
 });
-
+/**
+ * getting all the orders that made by a
+ * specefic coureir and show every information
+ * about the orders
+ */
 router.get("/get/courierOrders/all/:id", async (req, res) => {
   const orderList = await flyOrder.find({ courier: req.params.id }).populate([
     {
@@ -267,6 +284,9 @@ router.get("/get/courierOrders/all/:id", async (req, res) => {
   res.send(orderList);
 });
 
+/**
+ * count the pending orders of the specefic coureir from the database 
+ */
 router.get('/get/countThePending/:id', async (req, res) => {
   try {
     const orderCount = await flyOrder.countDocuments({
@@ -280,20 +300,25 @@ router.get('/get/countThePending/:id', async (req, res) => {
     res.status(500).json({ success: false });
   }
 });
+/**
+ * count the orders of the specefic coureir from the database 
+ */
+router.get('/get/countTheOrders/:id', async (req, res) => {
+  try {
+    const orderCount = await flyOrder.countDocuments({
+      courier: req.params.id,
+    });
 
-// router.get("/findOrder/:courierId", async (req, res) => {
-//   const takingOrder = await flyOrder.find(
-//     (order) =>
-//     order.status === "IN DELIVERY" &&
-//     order.courier._id === req.params.courierId
-//     );
-//     res.send(takingOrder);
-//   });
+    res.send({ orderCount });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false });
+  }
+});
 
-
-
-
-
+/**
+ * update the hour and the date of the order
+ */
 router.put("/update/:id", async (req, res) => {
   const order = await flyOrder.findByIdAndUpdate(
     req.params.id,
@@ -309,16 +334,58 @@ router.put("/update/:id", async (req, res) => {
   res.send(order);
 });
 
+/**
+ * updating the status of the order
+ * from pending to in delivery or rejected
+ * and from in delivery to delivered
+ */
 router.put("/updateStatus/:status/:id", async (req, res) => {
+  const { status, id } = req.params;
+
+  if (status === "IN DELIVERY") {
+    const order = await flyOrder.findById(id);
+
+    if (!order) return res.status(404).send("The order was not found.");
+
+    if (order.status === "IN DELIVERY") {
+      return res.status(400).send("The order is already in delivery.");
+    }
+
+    order.startDeliveryTime = new Date(); // Store the start time
+
+    await order.save();
+  }
+
+  if (status === "DELIVERED") {
+    const order = await flyOrder.findById(id);
+
+    if (!order) return res.status(404).send("The order was not found.");
+
+    if (order.status !== "IN DELIVERY") {
+      return res.status(400).send("The order is not in delivery.");
+    }
+
+    const startDeliveryTime = order.startDeliveryTime;
+    const endDeliveryTime = new Date();
+
+    const deliveryTime = Math.floor(
+      (endDeliveryTime - startDeliveryTime) / 1000 / 60 // Calculate the delivery time in minutes
+    );
+
+    order.deliveryTime = deliveryTime; // Store the delivery time
+
+    await order.save();
+  }
+
   const order = await flyOrder.findByIdAndUpdate(
-    req.params.id,
+    id,
     {
-      status: req.params.status,
+      status: status,
     },
     { new: true }
   );
 
-  if (!order) return res.status(404).send("the order status cannot be updated");
+  if (!order) return res.status(404).send("The order status cannot be updated.");
 
   res.send(order);
 });

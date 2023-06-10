@@ -41,7 +41,15 @@ const flyOrderSchema = new mongoose.Schema({
         type: String,
         enum: ['PENDING', 'IN DELIVERY','FINISHED','REJECTED'],
         default : 'PENDING',
-    }
+    },
+    startDeliveryTime: {
+        type: Date,
+        default: null,
+    },
+    deliveryTime: {
+        type: Number,
+        default: null,
+    },
 });
 
 flyOrderSchema.virtual('id').get(function () {

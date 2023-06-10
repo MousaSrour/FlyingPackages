@@ -1,112 +1,155 @@
-import React, {useState,setState} from 'react';
-import './components/style.css'
-import Button from '@material-ui/core/Button';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import "./components/style.css";
+import Button from "@material-ui/core/Button";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import "./OrdersTable.css"; // Import CSS file for styling
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
 
-
-
+const useStyles = makeStyles({
+  table: {
+    minWidth: 650,
+  },
+  noRequests: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "calc(100vh - 200px)",
+    fontFamily: "Arial, sans-serif",
+    fontSize: "24px",
+    color: "#000103",
+  },
+});
+/**
+ * this page is accessed by the manager 
+ * and he can see if there are any requests 
+ * of the suppliers(companies) regestirations
+ * @returns 
+ */
 function SupplierRegister() {
-    
-    const [company, setCompany] = useState(null);
+  const classes = useStyles();
+  const [users, setUsers] = useState([]);
 
-    const [creditCard,setCreditCard] = useState(null);
-    const [expirationDate,setExpirationDate] = useState(null);
-    const [cvv, setCvv] = useState(null);
+  // Fetch users with isNew=true from the API
+  const fetchUsers = async () => {
+    axios
+      .get("http://localhost:3000/api/v1/flyUsers/get/newUsers") //get all the new users to show to the manager
+      .then((response) => {
+        setUsers(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
-    const handleInputChange = (e) => {
-        const {id , value} = e.target;
-        if(id === "company"){
-            setCompany(value);
-        }
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
-        if(id === "creditCard"){
-            setCreditCard(value);
+  const handleAccept = async (userId) => {
+    try {
+      // Update user's isNew field to false
+      await fetch(
+        `http://localhost:3000/api/v1/flyUsers/update/${userId._id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ isNew: false }),
         }
-        if(id === "expirationDate"){
-            setExpirationDate(value);
-        }
-        if(id === "cvv"){
-            setCvv(value);
-        }
+      );
 
+      try {
+        await fetch(`http://localhost:3000/api/v1/Suppliers`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ordersNo: 0,
+            user: userId._id,
+            companyName: userId.company,
+          }),
+        });
+      } catch (error) {
+        console.log("Error accepting user:", error);
+      }
+
+      setUsers(users.filter((user) => user.id !== userId));
+    } catch (error) {
+      console.log("Error accepting user:", error);
     }
 
+    alert("The supplier added");
+    window.location.reload(); // Reload the page after showing the alert
+  };
 
-    const handleSubmit = async () => {
-        let dataJson = {};
-        let userObj;  
-        let user = localStorage.getItem("user");
-        if (user !== null) {
-           userObj = JSON.parse(user); // to get the json syntax
-        }
-        console.log("fetching")
-        const response = await fetch('http://localhost:3000/api/v1/Suppliers', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({    
-          "ordersNo": 0,
-          "registirationDate": Date.now,
-          "companyName": company,
-          "user": userObj,
-        }),
-        }).then(response => response.json())
-        .then(json=>{
-            alert('supplier registration done')
-        })
-        .catch(function(error){
-          alert('registration failed')
-        })
-    };
+  const handleReject = async (userId) => {
+    try {
+      console.log(userId);
+      // Delete the user from the flyUsers database
+      await fetch(`http://localhost:3000/api/v1/flyUsers/delete/${userId}`, {
+        method: "DELETE",
+      });
 
-    const handleSubmit2 = async () => {
-        let dataJson = {};
-        console.log("fetching")
-        const response = await fetch('http://localhost:3000/api/v1/creditCards', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({    
-          "creditCardNumber": creditCard,
-          "creditCardExpDate": expirationDate,
-          "creditCardCVV": cvv,
-        }),
-        }).then(response => response.json())
-        .then(json=>{
-            alert('credit card saved ')
-        })
-        .catch(function(error){
-          alert('registration failed')
-        })
-    };
+      // Remove user from the state
+      setUsers(users.filter((user) => user.id !== userId));
+    } catch (error) {
+      console.log("Error rejecting user:", error);
+    }
 
-    return(
-<div className="form">
-  <h1>Continue Registiration</h1>
-<p>Fisrt fill the fields then hit the register button, after that hit supplier or courier</p>
-  <div className="form-body">
-  <div className="company" style={{ marginBottom: '5px' }}>
-      <label className="form__label" htmlFor="id">company </label>
-      <input className="form__input" type="text" value={company} onChange={(e) => handleInputChange(e)} id="company" placeholder="company" />
+    alert("The user rejected");
+    window.location.reload(); // Reload the page after showing the alert
+  };
+
+  return (
+    <div>
+      <h1>Supplier Registeration Requests</h1>
+      {users.length === 0 ? (
+        <p className={classes.noRequests}>No requests found</p>      ) : (
+        <TableContainer component={Paper}>
+          <Table className={classes.table} aria-label="orders-table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Username</TableCell>
+                <TableCell>ID</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Company</TableCell>
+                <TableCell>Action</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {users.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell>{user.userName}</TableCell>
+                  <TableCell>{user.id}</TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>{user.company}</TableCell>
+                  <TableCell>
+                    <Button color="primary" onClick={() => handleAccept(user)}>
+                      Accept
+                    </Button>
+                    <Button
+                      color="secondary"
+                      onClick={() => handleReject(user._id)}
+                    >
+                      Reject
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
     </div>
-    <div className="creditCard" style={{ marginBottom: '5px' }}>
-      <label className="form__label" htmlFor="creditCard">Credit Card </label>
-      <input type="text" name="" id="creditCard" value={creditCard} className="form__input" onChange={(e) => handleInputChange(e)} placeholder="creditCard" />
-    </div>
-    <div className="expirationDate" style={{ marginBottom: '5px' }}>
-      <label className="form__label" htmlFor="expirationDate">RExpiration Date</label>
-      <input type="text" id="expirationDate" className="form__input" value={expirationDate} onChange={(e) => handleInputChange(e)} placeholder="expirationDate" />
-    </div>
-    <div className="cvv" style={{ marginBottom: '5px' }}>
-      <label className="form__label" htmlFor="cvv">CVV </label>
-      <input type="text" id="cvv" className="form__input" value={cvv} onChange={(e) => handleInputChange(e)} placeholder="cvv" />
-    </div>
-  </div>
-  <div className="footer">
-    <button onClick={() => handleSubmit()} type="submit" className="btn">Register1</button>
-    <button onClick={() => handleSubmit2()} type="submit" className="btn">Register2</button>
-  </div>
-</div>
-    )
-          
+  );
 }
 
-export default SupplierRegister
+export default SupplierRegister;

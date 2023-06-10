@@ -1,43 +1,52 @@
-.orders-table {
-    margin: 20px 0;
-  }
-  
-  .orders-table h2 {
-    margin-bottom: 10px;
-  }
-  
-  table {
-    border-collapse: collapse;
-    width: 100%;
-    max-width: 800px;
-    border-top: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
-    border-left: 1px solid #ccc;
-    border-right: 1px solid #ccc;
-  }
-  
-  th,
-  td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-    border-bottom: 1px solid #ccc;
-    border-right: 1px solid #ccc;
-
+.supplier-form, .order-form, .manage-Couriers-form, .manager-form {
+  color: white;
 }
-  
-  th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-  }
-  
-  tr:hover {
-    background-color: #f5f5f5;
-  }
-  
-  @media only screen and (max-width: 600px) {
-    th,
-    td {
-      padding: 8px;
-    }
-  }
+
+
+
+thead {
+  text-align: left;
+  border: 1px solid #8a8a8a;
+  color: rgb(30, 30, 30);
+  font-weight: bold;
+}
+
+table {
+  margin: auto;
+  border-collapse: collapse;
+  width: 70%;
+  color: rgb(30, 30, 30);
+  font-size: 25px;
+  border: 1px solid #8a8a8a;
+}
+
+th, td {
+  border: 1px solid #8a8a8a;
+  padding: 10px;
+}
+
+.buttons-section {
+  width: 70%;
+  margin: auto;
+  text-align: right;
+  margin-bottom: 10px;
+}
+
+.buttons-section > a {
+  margin-left: 15px;
+  color: white;
+}
+
+.form-body {
+  width: 70%;
+  margin: auto;
+}
+
+.new-order-form {
+  width: 70%;
+  margin: auto;
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #8a8a8a;
+}
+

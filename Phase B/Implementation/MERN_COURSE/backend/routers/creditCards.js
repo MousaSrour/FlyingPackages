@@ -3,7 +3,9 @@ const express = require('express');
 const router = express.Router();
 
 
-
+/**
+ * insert a new credit card to the database
+ */
 router.post('/', async (req,res)=>{
     const credit = await CreditCard.findOne({creditCardNumber: req.body.creditCardNumber})
     if(!credit){
