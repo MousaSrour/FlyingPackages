@@ -124,7 +124,7 @@ export default function Dashboard() {
           <Paper className={classes.paper}>
             <Avatar className={classes.avatar}>P</Avatar>
             <Typography variant="h6">Price Per Order</Typography>
-            <Typography variant="h4">20 ILS</Typography>
+            <Typography variant="h4">40 ILS</Typography>
           </Paper>
         </Grid>
 
@@ -134,7 +134,7 @@ export default function Dashboard() {
             <Typography variant="h6">Total Price</Typography>
             {list.length > 0 && (
               <Typography variant="h4">
-                {list[0].ordersPerMonth * 20 + " ILS"}
+                {list[0].ordersPerMonth * 40 + " ILS"}
               </Typography>
             )}
           </Paper>

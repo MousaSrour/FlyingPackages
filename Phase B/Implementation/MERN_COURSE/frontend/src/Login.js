@@ -61,8 +61,12 @@ function Login() {
 
                 // Redirect the user based on their role
                 if (user.role === "S") {
-                    localStorage.setItem("supplierUser", JSON.stringify(user));
-                    history.push("/supplierForm");
+                    if(!user.isNew){
+                        localStorage.setItem("supplierUser", JSON.stringify(user));
+                        history.push("/supplierForm");
+                    }else{
+                        alert("Wait for the approve from the manager!");
+                    }
                 } else if (user.role === "C") {
                     localStorage.setItem("courierUser", JSON.stringify(user));
                     history.push("/courierForm");

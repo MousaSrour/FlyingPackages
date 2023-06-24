@@ -238,7 +238,63 @@ router.get("/get/courierOrders/:id", async (req, res) => {
  * about the orders
  */
 router.get("/get/courierOrders/all/:id", async (req, res) => {
-  const orderList = await flyOrder.find({ courier: req.params.id }).populate([
+  const orderList = await flyOrder
+  .find({ courier: req.params.id })
+  .populate([
+    {
+      path: "supplier",
+      populate: {
+        path: "user",
+        model: flyUser,
+      },
+    },
+    {
+      path: "courier",
+      populate: {
+        path: "user",
+        model: flyUser,
+      },
+    },
+    {
+      path: "origin",
+      populate: {
+        path: "name",
+      },
+    },
+    {
+      path: "destination",
+      populate: {
+        path: "name",
+      },
+    },
+    {
+      path: "submitDate",
+      populate: {
+        path: "name",
+      },
+    },
+    {
+      path: "submitHour",
+      populate: {
+        path: "name",
+      },
+    },
+  ]);
+  if (!orderList) {
+    res.status(500).json({ success: false });
+  }
+  res.send(orderList);
+});
+
+/**
+ * getting all the orders that made by a
+ * specefic coureir and show every information
+ * about the orders
+ */
+router.get("/get/courierOrders2/all/:id", async (req, res) => {
+  const orderList = await flyOrder
+  .find({ courier: req.params.id, deliveryTime: { $ne: null } })
+  .populate([
     {
       path: "supplier",
       populate: {
@@ -330,6 +386,18 @@ router.put("/update/:id", async (req, res) => {
   );
 
   if (!order) return res.status(404).send("the order cannot be updated");
+
+  res.send(order);
+});
+
+
+/**
+ * delete the order
+ */
+router.delete("/delete/:id", async (req, res) => {
+  const order = await flyOrder.findByIdAndRemove(req.params.id);
+
+  if (!order) return res.status(404).send("the order cannot be deleted");
 
   res.send(order);
 });

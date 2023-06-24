@@ -57,10 +57,10 @@ function SupplierForm() {
         function (position) {
           const latitude = position.coords.latitude;
           const longitude = position.coords.longitude;
-          document.getElementById("latitude").textContent =
-            "Latitude: " + latitude;
-          document.getElementById("longitude").textContent =
-            "Longitude: " + longitude;
+          // document.getElementById("latitude").textContent =
+          //   "Latitude: " + latitude;
+          // document.getElementById("longitude").textContent =
+          //   "Longitude: " + longitude;
 
           // Geocoding API call to get the name based on the coordinates
           axios
@@ -165,33 +165,37 @@ function SupplierForm() {
             Monthly Bill Payments
           </Button>
         </div>
-        <div className="orders-table">
-          <table>
-            <thead>
-              <tr>
-                <th>Order Num</th>
-                <th>Courier</th>
-                <th>Destination</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.slice(0, displayedOrders).map((order) => (
-                <tr key={order.id}>
-                  <td>{order.orderNumber}</td>
-                  <td>{order.courier.user.userName}</td>
-                  <td>
-                    {order.destination ? order.destination.name : "not found"}
-                  </td>
-                  <td>{order.status}</td>
+        {orders.length > 0 ? (
+          <div className="orders-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Order Num</th>
+                  <th>Courier</th>
+                  <th>Destination</th>
+                  <th>Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          {displayedOrders < orders.length && (
-            <Button onClick={handleShowMore}>Show More</Button>
-          )}
-        </div>
+              </thead>
+              <tbody>
+                {orders.slice(0, displayedOrders).map((order) => (
+                  <tr key={order.id}>
+                    <td>{order.orderNumber}</td>
+                    <td>{order.courier.user.userName}</td>
+                    <td>
+                      {order.destination ? order.destination.name : "not found"}
+                    </td>
+                    <td>{order.status}</td>{" "}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {displayedOrders < orders.length && (
+              <Button onClick={handleShowMore}>Show More</Button>
+            )}
+          </div>
+        ) : (
+          <p>No orders available.</p>
+        )}
         {!hasLocation && (
           <Button
             onClick={handleUpdateLocation}

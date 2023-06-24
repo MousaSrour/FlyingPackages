@@ -15,7 +15,7 @@ import { TextField } from "@material-ui/core";
  * this page is accessed to the supplier after clicking in the supplier form
  * edit orders button, here we show to the supplier the pending orders
  * so he can edit the desired hour and date to update the courier
- * @returns 
+ * @returns
  */
 function EditOrder() {
   let supplierObj;
@@ -85,7 +85,21 @@ function EditOrder() {
         alert(error);
       });
   };
-
+  const handleCancel = (orderId) => {
+    const orderToUpdate = orders.find((order) => order.id === orderId);
+    axios
+      .delete(
+        `http://localhost:3000/api/v1/flyOrders/delete/${orderId}`
+      )
+      .then((response) => {
+        console.log(response);
+        alert("The order canceled");
+      })
+      .catch((error) => {
+        console.log(error);
+        alert(error);
+      });
+  };
   // Filter the orders to display only those with the 'pending' status
   const pendingOrders = orders.filter((order) => order.status === "PENDING");
 
@@ -115,10 +129,14 @@ function EditOrder() {
               <th>Date</th>
               <th>Status</th>
               <th>Edit</th>
+              <th>Cancel</th>
             </tr>
           </thead>
           <tbody>
-            {pendingOrders.map((order) => (
+            {pendingOrders
+            .slice()
+            .reverse()
+            .map((order) => (
               <tr key={order.id}>
                 <td>{order.orderNumber}</td>
                 <td>
@@ -144,6 +162,12 @@ function EditOrder() {
                   <Button onClick={() => handleEdit(order.id)}>
                     <Save />
                     Save
+                  </Button>
+                </td>
+                <td>
+                  <Button onClick={() => handleCancel(order.id)}>
+                    <Save />
+                    Cancel
                   </Button>
                 </td>
               </tr>

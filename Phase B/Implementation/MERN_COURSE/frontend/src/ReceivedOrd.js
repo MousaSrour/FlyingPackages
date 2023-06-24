@@ -168,6 +168,7 @@ function ReceivedOrders() {
     return (
         <div className={"order-form"}>
             <h1 style={{textAlign: "center",}}>Received Orders</h1>
+            <p>*Each delivery will benefit you a 20 ILS</p>
             {currentOrder && (
                 <div style={{width: "70%", margin: "auto", fontSize: 25, marginBottom: 20}}>
                     You are currently delivering order {currentOrder.orderNumber}.

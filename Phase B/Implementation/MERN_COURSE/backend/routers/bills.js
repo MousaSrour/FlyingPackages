@@ -21,6 +21,7 @@ router.get('/get/:id/:month', async (req, res) =>{
 
 /**
  * add a new bill
+ * ot if there is existed bill increase the ordersPerMonth
  */
 router.post('/', async (req,res)=>{
     const supplier = req.body.supplier
@@ -50,6 +51,7 @@ router.post('/', async (req,res)=>{
     res.send(bill);
 }
 })
+
 
 
 module.exports = router;

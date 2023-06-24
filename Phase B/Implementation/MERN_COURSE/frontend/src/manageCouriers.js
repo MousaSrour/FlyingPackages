@@ -73,7 +73,7 @@ function ManageCouriers() {
   const calculateEfficiency = async (courier) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/v1/flyOrders/get/courierOrders/all/${courier._id}`
+        `http://localhost:3000/api/v1/flyOrders/get/courierOrders2/all/${courier._id}`
       );
 
       if (response.status === 200) {
@@ -84,7 +84,6 @@ function ManageCouriers() {
         orders.forEach((order) => {
           totalDeliveryTime += order.deliveryTime;
         });
-
         const averageDeliveryTime = totalDeliveryTime / totalOrders;
         let efficiency = (averageDeliveryTime / 30) * 10;
         if (totalOrders === 1) {

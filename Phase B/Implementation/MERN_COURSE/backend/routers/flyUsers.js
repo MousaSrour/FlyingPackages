@@ -28,7 +28,8 @@ router.post('/', async (req, res) => {
         phone: req.body.phone,
         isAdmin: req.body.isAdmin,
         isNew: req.body.isNew,
-        company: req.body.company // Add the company field
+        company: req.body.company, // Add the company field
+        role: req.body.role
       });
       flyUuser = await flyUuser.save();
   
