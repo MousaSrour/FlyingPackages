@@ -47,11 +47,11 @@ const months = [
   "December",
 ];
 /**
- * this page is accessed by the managers and they can 
+ * this page is accessed by the managers and they can
  * pick a company that in the system and select a month
  * and see how much orders made by the specefic company
- * and see the total payments 
- * @returns 
+ * and see the total payments
+ * @returns
  */
 export default function PaymentReports() {
   const [selectedMonth, setSelectedMonth] = useState(
@@ -94,6 +94,19 @@ export default function PaymentReports() {
         });
     }
   }, [selectedSupplier, selectedMonth]);
+
+  const deleteSupplier = async (supplierId) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/api/v1/Suppliers/deleteSupplier/${supplierId}`
+      );
+      alert("The supplier deleted succesfully")
+      console.log("Supplier deleted:", response.data);
+    } catch (error) {
+      // Handle the error here
+      console.log(error);
+    }
+  };
 
   return (
     <div className={classes.root}>
@@ -146,6 +159,22 @@ export default function PaymentReports() {
 
         {selectedSupplier && (
           <>
+            <Grid item xs={12} md={12} style={{ textAlign: "center" }}>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => {
+                  const confirmed = window.confirm(
+                    "Are you sure you want to delete this supplier?"
+                  );
+                  if (confirmed) {
+                    deleteSupplier(selectedSupplier);
+                  }
+                }}
+              >
+                Delete Supplier
+              </Button>
+            </Grid>
             <Grid item xs={12} md={12}>
               <Paper className={classes.paper}>
                 <Avatar className={classes.avatar}>O</Avatar>

@@ -63,4 +63,11 @@ router.put("/updateLocation/:id/:location", async (req, res) => {
     res.send(supplier);
   });
 
+  router.delete("/deleteSupplier/:id", async (req, res) =>{
+    const deleted = await Supplier.findByIdAndRemove(req.params.id)
+    if (!deleted) return res.status(404).send("the supplier cannot be deleted");
+  
+    res.send(deleted);
+  })
+
 module.exports = router;
