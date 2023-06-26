@@ -10,7 +10,8 @@ The products are :
 3. Link for the Prototype-GUI (Axure).
 4. UML Diagrams
 
-For Phase B folder we have the implementation that includes the code and we have the products which are:
+For Phase B folder we have the implementation that includes the code,
+and we have the products which are:
 
 1. The book.
 2. Presentation (PPT).
